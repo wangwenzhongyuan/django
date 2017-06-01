@@ -1,11 +1,90 @@
 {%extends 'dayday/base01.html'%}
 
+{%block js%}
+<script type="text/javascript">
+	
+	$(function(){
 
-	{%block title%}
+		
+		// 提交表单时候,如果都为false,组织提交事件
 
-	<title>天天生鲜-登录</title>
+		name_err = false;
+		pwd_err = false;
+		var $user_err = $('.user_error');
+		var $pwd_err = $('.pwd_error');
+		var $name_input = $('.name_input');
+		var $pass_input = $('.pass_input');
 
-	{%endblock title%}
+		// 当输入密码后,进行提交.处理提交事件的视图验证,如果有错误会传过来两个变量
+		//默认是0(默认值是进入登陆页面的视图传送过来)
+
+		if ({{err_name}}==1) 
+		{
+			$user_err.html('用户名错误').show()
+		}
+
+		if ({{err_passwd}}==1) 
+		{
+			$pwd_err.html('密码错误').show()
+		}
+		
+
+		$name_input.blur(function(){
+			len = $name_input.val().length
+			
+		if (len==0)	
+		{
+			$user_err.html('请输入用户名').show();
+	 	 	name_err = true
+	 	 	// alert('hahah')
+		};
+
+		if(len!=0)
+
+		{
+			$user_err.hide();
+			name_err = false
+		}
+
+		})
+
+		$pass_input.blur(function(){
+			if ($pass_input.val().length==0)
+
+			{
+				$pwd_err.html('请输入密码').show();
+				pwd_err = true;
+
+			}
+
+			else{
+				$pwd_err.hide()
+				pwd_err = false;
+				
+
+			}
+		})
+
+
+		$('#form_input').submit(function(){
+
+			$name_input.blur();
+			$pass_input.blur();
+			if(name_err==false && pwd_err==false)
+			{
+				return true;
+			}
+			else{
+				return false;
+			}
+
+		})
+
+	})
+
+</script>
+{%endblock js%}
+
 	
 {%block content%}
 	<div class="login_top clearfix">
@@ -22,15 +101,15 @@
 					<a href="/user/register/">立即注册</a>
 				</div>
 				<div class="form_input">
-					<form method="post" action="">
+					<form method="post" action="/user/login_handle/" id="form_input">
 					
 					{%csrf_token%}
-						<input type="text" name="username" class="name_input" placeholder="请输入用户名">
+						<input type="text" name="username" class="name_input" placeholder="请输入用户名" value="{{uname}}">
 						<div class="user_error">输入错误</div>
-						<input type="password" name="pwd" class="pass_input" placeholder="请输入密码">
+						<input type="password" name="pwd" class="pass_input" placeholder="请输入密码" value="{{upasswd}}">
 						<div class="pwd_error">输入错误</div>
 						<div class="more_input clearfix">
-							<input type="checkbox" name="">
+							<input type="checkbox" name="rem" value='1' checked="false">
 							<label>记住用户名</label>
 							<a href="#">忘记密码</a>
 						</div>
